@@ -3,7 +3,7 @@
 
 import os
 import ujson as json
-import cPickle as pickle
+import pickle
 
 def create_path(path):
     dirname = os.path.dirname(path)
