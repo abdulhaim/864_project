@@ -38,7 +38,7 @@ class Batch(object):
         self.lengths, sorted_ids = self.sort_by_length(self.encoder_inputs)
         self.tgt_lengths, _ = self.sort_by_length(self.decoder_inputs)
         if sort_by_length:
-            for k, v in self.context_data.iteritems():
+            for k, v in self.context_data.items():
                 if v is not None:
                     self.context_data[k] = self.order_by_id(v, sorted_ids)
             for attr in unsorted_attributes:

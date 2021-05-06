@@ -132,7 +132,7 @@ class Trainer(object):
         true_batchs = []
         accum = 0
         normalization = 0
-        num_batches = train_iter.next()
+        num_batches = next(train_iter)
         self.cuda = use_gpu(opt)
 
         for batch_idx, batch in enumerate(train_iter):

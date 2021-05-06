@@ -108,6 +108,11 @@ if __name__ == '__main__':
 
     random.seed(args.random_seed)
     model_args = args
+    
+    #wordvec = {'utterance': model_args.pretrained_wordvec[0],"kb":model_args.pretrained_wordvec[1]}
+    #pretrained = torch.load(wordvec["utterance"])
+    #print(pretrained[0])
+    #print(1/0)
 
     if torch.cuda.is_available() and not args.gpuid:
         print("WARNING: You have a CUDA device, should run with -gpuid 0")
@@ -122,6 +127,9 @@ if __name__ == '__main__':
     schema = Schema(model_args.schema_path, None)
     data_generator = get_data_generator(args, model_args, schema)
     mappings = data_generator.mappings
+    #print(mappings["src_vocab"].word_to_ind)
+    #print(mappings)
+    #print(1/0)
     if args.vocab_only:
         import sys; sys.exit()
 

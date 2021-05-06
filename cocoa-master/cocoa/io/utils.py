@@ -20,7 +20,10 @@ def write_json(raw, path, ensure_path=False):
     if ensure_path:
         create_path(path)
     with open(path, 'w') as out:
-        print >>out, json.dumps(raw)
+        #print >>out, json.dumps(raw)
+        print(json.dumps(raw),file=out)
+        #print >>depend, s,
+        #print(s, end="", file=depend)
 
 def read_pickle(path):
     with open(path, 'rb') as fin:

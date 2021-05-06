@@ -513,7 +513,7 @@ class DataGenerator(object):
     def generator(self, name, shuffle=True, cuda=True):
         dialogue_batches = self.batches[name]
         yield sum([len(b) for b in dialogue_batches])
-        inds = range(len(dialogue_batches))
+        inds = list(range(len(dialogue_batches)))
         if shuffle:
             random.shuffle(inds)
         for ind in inds:
