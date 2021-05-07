@@ -168,7 +168,7 @@ class Trainer(object):
 
         stats = Statistics()
 
-        num_val_batches = valid_iter.next()
+        num_val_batches = next(valid_iter)
         dec_state = None
         for batch in valid_iter:
             if batch is None:
