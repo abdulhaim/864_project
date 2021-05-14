@@ -1,3 +1,4 @@
+from builtins import object
 class System(object):
     """An abstract class for building a Session object.
     """

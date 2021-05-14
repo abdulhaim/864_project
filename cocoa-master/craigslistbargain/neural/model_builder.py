@@ -2,6 +2,7 @@
 This file is for models creation, which consults options
 and creates each encoder and decoder accordingly.
 """
+from __future__ import print_function
 import torch
 import torch.nn as nn
 
@@ -27,7 +28,7 @@ def build_model(model_opt, opt, fields, checkpoint):
     model = onmt.ModelConstructor.make_base_model(model_opt, fields,
                                                   use_gpu(opt), checkpoint)
     if len(opt.gpuid) > 1:
-        print('Multi gpu training: ', opt.gpuid)
+        print(('Multi gpu training: ', opt.gpuid))
         model = nn.DataParallel(model, device_ids=opt.gpuid, dim=1)
     print(model)
 

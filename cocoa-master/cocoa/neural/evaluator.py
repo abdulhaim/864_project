@@ -1,11 +1,15 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import next
+from builtins import object
 import sys
 import os
 from itertools import count
 
 from onmt.Utils import use_gpu
 
-from utterance import UtteranceBuilder
-from symbols import markers
+from .utterance import UtteranceBuilder
+from .symbols import markers
 
 
 class Evaluator(object):
@@ -25,7 +29,7 @@ class Evaluator(object):
         gold_score_total, gold_words_total = 0, 0
 
         data_iter = data.generator(split, shuffle=False)
-        num_batches = data_iter.next()
+        num_batches = next(data_iter)
         dec_state = None
         for batch in data_iter:
             if batch is None:

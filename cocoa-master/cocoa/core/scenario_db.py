@@ -1,3 +1,4 @@
+from builtins import object
 class Scenario(object):
     '''
     A scenario represents a situation to be played out where each agent has a KB.

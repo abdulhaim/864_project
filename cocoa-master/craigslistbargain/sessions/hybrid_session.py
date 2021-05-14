@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+from builtins import object
 import random
 import numpy as np
 

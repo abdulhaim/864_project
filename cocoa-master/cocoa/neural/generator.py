@@ -1,12 +1,16 @@
+from __future__ import absolute_import
+from builtins import zip
+from builtins import range
+from builtins import object
 import torch
 from torch.autograd import Variable
 
 import onmt.io
 from onmt.Utils import aeq
 
-from symbols import markers
-from beam import Beam
-from utterance import UtteranceBuilder
+from .symbols import markers
+from .beam import Beam
+from .utterance import UtteranceBuilder
 
 
 class Generator(object):
@@ -291,7 +295,7 @@ class Sampler(Generator):
         # (2) Sampling
         batch_size = batch.size
         preds = []
-        for i in xrange(self.max_length):
+        for i in range(self.max_length):
             # Outputs to probs
             dec_out = dec_out.squeeze(0)  # (batch_size, rnn_size)
             out = self.model.generator.forward(dec_out).data  # Logprob (batch_size, vocab_size)
@@ -330,7 +334,7 @@ class LMSampler(Sampler):
         # (2) Sampling
         batch_size = batch.size
         preds = []
-        for i in xrange(self.max_length):
+        for i in range(self.max_length):
             # Outputs to probs
             dec_out = dec_out.squeeze(0)  # (batch_size, rnn_size)
             out = self.model.generator.forward(dec_out).data  # Logprob (batch_size, vocab_size)

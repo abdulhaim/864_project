@@ -1,9 +1,11 @@
+from __future__ import print_function
+from builtins import object
 import random
 import re
 import logging
 import numpy as np
 from collections import namedtuple
-from itertools import izip
+
 
 from cocoa.core.entity import is_entity
 from cocoa.core.event import Event
@@ -109,7 +111,7 @@ class CraigslistRulebasedSession(BaseRulebasedSession):
         return template.format(title=self.title, price=(price or ''), listing_price=self.listing_price, partner_price=(self.state.partner_price or ''), my_price=(self.state.my_price or ''))
 
     def template_message(self, intent, price=None):
-        print 'template:', intent, price
+        print('template:', intent, price)
         template = self.retrieve_response_template(intent, category=self.kb.category, role=self.kb.role)
         if '{price}' in template['template']:
             price = price or self.state.my_price

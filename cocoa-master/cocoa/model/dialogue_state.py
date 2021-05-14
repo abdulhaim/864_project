@@ -1,4 +1,6 @@
-from parser import LogicalForm as LF, Utterance
+from __future__ import absolute_import
+from builtins import object
+from .parser import LogicalForm as LF, Utterance
 
 class DialogueState(object):
     def __init__(self, agent, kb):

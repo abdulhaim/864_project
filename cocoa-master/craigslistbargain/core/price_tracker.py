@@ -1,3 +1,8 @@
+from __future__ import division
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import math
 import re
 from collections import defaultdict
@@ -32,7 +37,7 @@ class PriceScaler(object):
         '''
         assert (t - b) != 0
         w = 1. / (t - b)
-        c = -1. * b / (t - b)
+        c = old_div(-1. * b, (t - b))
         return w, c
 
     @classmethod
@@ -42,7 +47,7 @@ class PriceScaler(object):
         b, t = cls.get_price_range(kb)
         w, c = cls.get_parameters(b, t)
         assert w != 0
-        p = (p - c) / w
+        p = old_div((p - c), w)
         p = int(p)
         if isinstance(price, Entity):
             return price._replace(canonical=price.canonical._replace(value=p))

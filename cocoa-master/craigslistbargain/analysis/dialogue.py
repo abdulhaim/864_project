@@ -1,8 +1,14 @@
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
+from past.utils import old_div
+from builtins import object
 import math
 import json
 import re
 from collections import defaultdict
-from itertools import izip, ifilter
+
 import nltk
 from nltk.corpus import stopwords
 from nltk import pos_tag
@@ -16,7 +22,7 @@ from cocoa.core.entity import Entity, is_entity, CanonicalEntity
 
 from core.scenario import Scenario
 from core.tokenizer import tokenize
-from speech_acts import SpeechActAnalyzer
+from .speech_acts import SpeechActAnalyzer
 
 sent_tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
 nltk.download('stopwords')
@@ -142,7 +148,7 @@ class Dialogue(object):
         self.scenario_id = self.get_scenario_id(post_id, self.buyer_target)
         self.turns = turns
         self.outcome = outcome
-        self.eval_scores = {kbs[agent_id].facts['personal']['Role']: s for agent_id, s in scores.iteritems()}
+        self.eval_scores = {kbs[agent_id].facts['personal']['Role']: s for agent_id, s in scores.items()}
         self.margins = self.compute_margin()
 
     @classmethod
@@ -179,7 +185,7 @@ class Dialogue(object):
         price = self.outcome['offer']['price']
 
         norm_factor = abs(midpoint - targets['seller'])
-        margins['seller'] = (price - midpoint) / norm_factor
+        margins['seller'] = old_div((price - midpoint), norm_factor)
         # Zero sum
         margins['buyer'] = -1. * margins['seller']
         return margins
@@ -209,10 +215,10 @@ class Dialogue(object):
     @classmethod
     def parse_scores(cls, raw_scores):
         agent_scores = {}
-        for agent_id, scores in raw_scores.iteritems():
+        for agent_id, scores in raw_scores.items():
             agent_id = int(agent_id)
             question_scores = {}
-            for question, score in scores.iteritems():
+            for question, score in scores.items():
                 if question in cls.eval_questions:
                     question_scores[question] = int(score)
             agent_scores[agent_id] = question_scores
@@ -277,7 +283,7 @@ class Dialogue(object):
         for utterance in self.iter_utterances():
             if utterance.action == 'message':
                 tokens = self._treebank_to_liwc_token(utterance.tokens)
-                for token in ifilter(lambda x: not is_entity(x), tokens):
+                for token in filter(lambda x: not is_entity(x), tokens):
                     cats = liwc.lookup(token)
                     for cat in cats:
                         utterance.categories[cat][token] += 1
@@ -314,7 +320,7 @@ class Dialogue(object):
         seller_target = self.kb_by_role['seller'].facts['personal']['Target']
         buyer_target = self.kb_by_role['buyer'].facts['personal']['Target']
         v_dist = seller_target - buyer_target
-        v_offset = max(0.5, v_dist / 10)
+        v_offset = max(0.5, old_div(v_dist, 10))
         min_price = min(data['price'])
         max_price = max(data['price'])
         y_min = min(min_price, buyer_target) - 4*v_offset
@@ -325,8 +331,8 @@ class Dialogue(object):
         ax.plot(data['time_step'], data['price'], zorder=10)
 
         # Label points
-        offset = (y_max - y_min) / 20
-        for i, (t, p, a) in enumerate(izip(data['time_step'], data['price'], data['speech_acts'])):
+        offset = old_div((y_max - y_min), 20)
+        for i, (t, p, a) in enumerate(zip(data['time_step'], data['price'], data['speech_acts'])):
             v = (1 if i % 2 == 0 else -1) * offset
             ax.text(t, p+v, '|'.join([x[0].abrv for x in a]), fontsize=15, horizontalalignment='center', verticalalignment='center')
 
@@ -347,11 +353,11 @@ class Dialogue(object):
             hline(ax, target, 0, N+1, 'r--')
 
         # Scatter seller points
-        for role, color in izip(('seller', 'buyer'), ('r', 'b')):
-            time_step = [x for x, r in izip(data['time_step'], data['role']) if r == role]
-            price = [x for x, r in izip(data['price'], data['role']) if r == role]
+        for role, color in zip(('seller', 'buyer'), ('r', 'b')):
+            time_step = [x for x, r in zip(data['time_step'], data['role']) if r == role]
+            price = [x for x, r in zip(data['price'], data['role']) if r == role]
             points = ax.scatter(time_step, price, s=200, zorder=20)
-            labels = ['<div class="utterance">{}</div>'.format(u) for u, r in izip(data['text'], data['role']) if r == role]
+            labels = ['<div class="utterance">{}</div>'.format(u) for u, r in zip(data['text'], data['role']) if r == role]
             tooltip = mpld3.plugins.PointHTMLTooltip(points, labels=labels, voffset=10, hoffset=10, css=self.css)
             mpld3.plugins.connect(fig, tooltip)
 
@@ -371,8 +377,8 @@ if __name__ == '__main__':
     dialogue = Dialogue.from_dict(transcripts[0], price_tracker)
     dialogue.label_liwc(liwc)
     for u in dialogue.iter_utterances():
-        print u.text
-        print u.categories
+        print(u.text)
+        print(u.categories)
     #dialogue.extract_keywords()
     #dialogue.label_speech_acts()
     #dialogue.label_stage()

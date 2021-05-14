@@ -1,3 +1,7 @@
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from past.utils import old_div
 from collections import defaultdict
 import numpy as np
 
@@ -5,7 +9,7 @@ from cocoa.core.dataset import Example
 from cocoa.analysis.visualizer import Visualizer as BaseVisualizer
 
 from core.scenario import Scenario
-from analyze_strategy import StrategyAnalyzer
+from .analyze_strategy import StrategyAnalyzer
 
 class Visualizer(BaseVisualizer):
     agents = ('human', 'rulebased', 'config-rule', 'neural-gen')
@@ -38,16 +42,16 @@ class Visualizer(BaseVisualizer):
 
     def print_results(self, results):
         systems = sorted(results.keys())
-        print '{:<20s} {:<10s} {:<10s} {:<10s} {:<10s}'.format('system', 'success', 'margin', 'length', '#examples')
+        print('{:<20s} {:<10s} {:<10s} {:<10s} {:<10s}'.format('system', 'success', 'margin', 'length', '#examples'))
         for system in systems:
             res = results[system]
-            print '{:<20s} {:<10.2f} {:<10.2f} {:<10.2f} {:<10d}'.format(
+            print('{:<20s} {:<10.2f} {:<10.2f} {:<10.2f} {:<10d}'.format(
                     system,
                     res['success rate'],
                     res['average margin'],
                     res['average length'],
                     res['num examples'],
-                    )
+                    ))
 
     def compute_effectiveness_for_system(self, examples, system):
         num_success = 0
@@ -74,8 +78,8 @@ class Visualizer(BaseVisualizer):
                     continue
                 else:
                     final_offer += margin
-        return {'success rate': num_success / (float(total) + 1e-5),
-                'average margin': final_offer / (float(num_success) + 1e-5),
-                'average length': length / (float(total) + 1e-5),
+        return {'success rate': old_div(num_success, (float(total) + 1e-5)),
+                'average margin': old_div(final_offer, (float(num_success) + 1e-5)),
+                'average length': old_div(length, (float(total) + 1e-5)),
                 'num examples': len(examples),
                 }

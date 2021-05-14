@@ -1,8 +1,11 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import object
 import random
 
 from cocoa.core.util import read_json, write_json
 
-from utils import xml_safe
+from .utils import xml_safe
 
 def add_eval_data_arguments(parser):
     parser.add_argument('--system-outputs', nargs='*', help='Path to JSON data or raw generation results in forms of (system, path, ...)')
@@ -15,7 +18,7 @@ class EvalData(object):
         self.data = data
 
     def dump(self, output):
-        print 'Dumping data to {}'.format(output)
+        print('Dumping data to {}'.format(output))
         write_json(self.data, output)
 
     def sample_examples(self, num_context, evaluated=set(), systems=None, pairs=None, qids=None):
@@ -33,11 +36,11 @@ class EvalData(object):
 
         """
         if not qids:
-            example_ids = [x for x in self.data.keys() if not x in evaluated]
+            example_ids = [x for x in list(self.data.keys()) if not x in evaluated]
         else:
             example_ids = qids
         if num_context > len(example_ids):
-            print 'WARNING: wanted {} examples, only has {}'.format(num_context, len(example_ids))
+            print('WARNING: wanted {} examples, only has {}'.format(num_context, len(example_ids)))
             num_context = len(example_ids)
         selected_ids = random.sample(example_ids, num_context)
         examples = []
@@ -45,7 +48,7 @@ class EvalData(object):
             responses = self.data[id_]['responses']
             context = self.data[id_]['context']
             if not pairs:
-                for system, response in responses.iteritems():
+                for system, response in responses.items():
                     if systems is not None and not system in systems:
                         continue
                     qid = '{system}-{ex_id}'.format(system=system, ex_id=id_)

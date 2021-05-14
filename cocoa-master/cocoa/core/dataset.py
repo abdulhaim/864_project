@@ -1,7 +1,9 @@
 '''
 Data structures for events, examples, and datasets.
 '''
+from __future__ import print_function
 
+from builtins import object
 from cocoa.core.util import read_json
 from cocoa.core.event import Event
 from cocoa.core.kb import KB
@@ -38,7 +40,7 @@ class Example(object):
         outcome = raw['outcome']
         ex_id = raw['uuid']
         if 'agents' in raw:
-            agents = {int(k): v for k, v in raw['agents'].items()}
+            agents = {int(k): v for k, v in list(raw['agents'].items())}
         else:
             agents = None
         agents_info = raw.get('agents_info', None)
@@ -51,7 +53,7 @@ class Example(object):
         outcome = raw['outcome']
         ex_id = raw['uuid']
         if 'agents' in raw:
-            agents = {int(k): v for k, v in raw['agents'].iteritems()}
+            agents = {int(k): v for k, v in raw['agents'].items()}
         else:
             agents = None
         agents_info = raw.get('agents_info', None)

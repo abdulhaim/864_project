@@ -1,3 +1,7 @@
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from past.utils import old_div
 import argparse
 from collections import defaultdict
 import json
@@ -18,8 +22,8 @@ import cocoa.options
 
 from core.scenario import Scenario
 from systems import get_system
-from main.db_reader import DatabaseReader
-from main.backend import DatabaseManager
+from .main.db_reader import DatabaseReader
+from .main.backend import DatabaseManager
 import options
 
 __author__ = 'anushabala'
@@ -80,8 +84,8 @@ def add_systems(args, config_dict, schema, debug=False):
     systems = {HumanSystem.name(): HumanSystem()}
     pairing_probabilities = {}
     timed = False if debug else True
-    for (sys_name, info) in config_dict.iteritems():
-        if "active" not in info.keys():
+    for (sys_name, info) in config_dict.items():
+        if "active" not in list(info.keys()):
             warnings.warn("active status not specified for bot %s - assuming that bot is inactive." % sys_name)
         if info["active"]:
             name = info["type"]
@@ -93,24 +97,24 @@ def add_systems(args, config_dict, schema, debug=False):
                     '{}. Ignoring configuration.'.format(info, sys_name))
                 continue
             systems[sys_name] = model
-            if 'prob' in info.keys():
+            if 'prob' in list(info.keys()):
                 prob = float(info['prob'])
                 pairing_probabilities[sys_name] = prob
                 total_probs += prob
-    print '{} systems loaded'.format(len(systems))
+    print('{} systems loaded'.format(len(systems)))
     for name in systems:
-        print name
+        print(name)
 
     # TODO: clean up pairing probabilities (obsolete)
     if total_probs > 1.0:
         raise ValueError("Probabilities for active bots can't exceed 1.0.")
-    if len(pairing_probabilities.keys()) != 0 and len(pairing_probabilities.keys()) != len(systems.keys()):
-        remaining_prob = (1.0-total_probs)/(len(systems.keys()) - len(pairing_probabilities.keys()))
+    if len(list(pairing_probabilities.keys())) != 0 and len(list(pairing_probabilities.keys())) != len(list(systems.keys())):
+        remaining_prob = old_div((1.0-total_probs),(len(list(systems.keys())) - len(list(pairing_probabilities.keys()))))
     else:
-        remaining_prob = 1.0 / len(systems.keys())
+        remaining_prob = 1.0 / len(list(systems.keys()))
     inactive_bots = set()
-    for system_name in systems.keys():
-        if system_name not in pairing_probabilities.keys():
+    for system_name in list(systems.keys()):
+        if system_name not in list(pairing_probabilities.keys()):
             if remaining_prob == 0.0:
                 inactive_bots.add(system_name)
             else:
@@ -179,11 +183,11 @@ if __name__ == "__main__":
     params['logging']['app_log'] = log_file
     params['logging']['chat_dir'] = transcripts_dir
 
-    if 'task_title' not in params.keys():
+    if 'task_title' not in list(params.keys()):
         raise ValueError("Title of task should be specified in config file with the key 'task_title'")
 
     instructions = None
-    if 'instructions' in params.keys():
+    if 'instructions' in list(params.keys()):
         instructions_file = open(params['instructions'], 'r')
         instructions = "".join(instructions_file.readlines())
         instructions_file.close()
@@ -192,7 +196,7 @@ if __name__ == "__main__":
                          "'instructions")
 
     templates_dir = None
-    if 'templates_dir' in params.keys():
+    if 'templates_dir' in list(params.keys()):
         templates_dir = params['templates_dir']
     else:
         raise ValueError("Location of HTML templates should be specified in config with the key templates_dir")
@@ -213,16 +217,16 @@ if __name__ == "__main__":
     scenario_db = ScenarioDB.from_dict(schema, scenarios, Scenario)
     app.config['scenario_db'] = scenario_db
 
-    if 'models' not in params.keys():
+    if 'models' not in list(params.keys()):
         params['models'] = {}
 
-    if 'quit_after' not in params.keys():
+    if 'quit_after' not in list(params.keys()):
         params['quit_after'] = params['status_params']['chat']['num_seconds'] + 1
 
-    if 'skip_chat_enabled' not in params.keys():
+    if 'skip_chat_enabled' not in list(params.keys()):
         params['skip_chat_enabled'] = False
 
-    if 'end_survey' not in params.keys() :
+    if 'end_survey' not in list(params.keys()) :
         params['end_survey'] = 0
 
     if 'debug' not in params:
@@ -245,12 +249,12 @@ if __name__ == "__main__":
     app.config['task_title'] = params['task_title']
 
 
-    if 'icon' not in params.keys():
+    if 'icon' not in list(params.keys()):
         app.config['task_icon'] = 'handshake.jpg'
     else:
         app.config['task_icon'] = params['icon']
 
-    print "App setup complete"
+    print("App setup complete")
 
     server = WSGIServer(('', args.port), app, log=WebLogger.get_logger(), error_log=error_log_file)
     atexit.register(cleanup, flask_app=app)

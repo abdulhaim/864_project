@@ -1,4 +1,7 @@
 from __future__ import division
+from __future__ import print_function
+from builtins import range
+from builtins import object
 """
 This is the loadable seq2seq trainer library that is
 in charge of training details, loss compute, and statistics.
@@ -253,7 +256,7 @@ class Trainer(object):
                           else real_model.generator)
 
         model_state_dict = real_model.state_dict()
-        model_state_dict = {k: v for k, v in model_state_dict.items()
+        model_state_dict = {k: v for k, v in list(model_state_dict.items())
                             if 'generator' not in k}
         generator_state_dict = real_generator.state_dict()
         checkpoint = {

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import argparse
 import copy
 
@@ -71,9 +72,16 @@ if __name__ == '__main__':
     #    for u in d:
     #        print u
     #import sys; sys.exit()
-
     if args.transcripts_output:
-        write_json([e.to_dict() for e in examples], args.transcripts_output)
+        raw = []
+        for e in examples:
+            e_dict = e.to_dict()
+            for i in range(len(e_dict.get('events'))):
+                if e_dict['events'][i]['metadata'] is not None:
+                    e_dict['events'][i]['metadata'] = e_dict['events'][i]['metadata'].to_dict()
+            raw.append(e_dict)
+
+        write_json(raw, args.transcripts_output)
 
     # Train n-gram model
     sequences = []
@@ -91,5 +99,5 @@ if __name__ == '__main__':
     # Test model and generator
     generator = Generator(templates)
     action = manager.choose_action(None, context=('<start>', '<start>'))
-    print action
-    print generator.retrieve('<start>', context_tag='<start>', tag=action, category='car', role='seller').template
+    print(action)
+    print(generator.retrieve('<start>', context_tag='<start>', tag=action, category='car', role='seller').template)

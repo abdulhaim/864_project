@@ -1,5 +1,9 @@
 from __future__ import division
+from __future__ import print_function
 
+from builtins import next
+from builtins import range
+from builtins import object
 import time
 import sys
 import math
@@ -207,7 +211,7 @@ class Trainer(object):
                           else real_model.generator)
 
         model_state_dict = real_model.state_dict()
-        model_state_dict = {k: v for k, v in model_state_dict.items()
+        model_state_dict = {k: v for k, v in list(model_state_dict.items())
                             if 'generator' not in k}
         generator_state_dict = real_generator.state_dict()
         checkpoint = {

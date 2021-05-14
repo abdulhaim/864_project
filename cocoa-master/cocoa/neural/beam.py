@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import object
+from past.utils import old_div
 from onmt.translate.Beam import Beam
 
 
@@ -13,9 +16,9 @@ class Scorer(object):
         Additional term add to log probability
         See https://arxiv.org/pdf/1609.08144.pdf.
         """
-        l_term = (((5 + len(beam.next_ys)) ** self.alpha) /
-                  ((5 + 1) ** self.alpha))
-        return (logprobs / l_term)
+        l_term = (old_div(((5 + len(beam.next_ys)) ** self.alpha),
+                  ((5 + 1) ** self.alpha)))
+        return (old_div(logprobs, l_term))
 
     def update_global_state(self, beam):
         return

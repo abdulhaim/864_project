@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import object
 import torch.optim as optim
 from torch.nn.utils import clip_grad_norm
 

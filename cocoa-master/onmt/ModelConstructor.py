@@ -2,6 +2,7 @@
 This file is for models creation, which consults options
 and creates each encoder and decoder accordingly.
 """
+from __future__ import print_function
 import torch
 import torch.nn as nn
 

@@ -5,16 +5,19 @@
 # For license information, see LICENSE.TXT
 
 from __future__ import unicode_literals, division
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import object
 from math import log
 
 from nltk import compat
-from util import safe_div
+from .util import safe_div
 
 
 NEG_INF = float("-inf")
 
 
-@compat.python_2_unicode_compatible
+# @compat.python_2_unicode_compatible
 class BaseNgramModel(object):
     """An example of how to consume NgramCounter to create a language model.
 
@@ -109,7 +112,7 @@ class BaseNgramModel(object):
         return pow(2.0, self.entropy(text))
 
 
-@compat.python_2_unicode_compatible
+# @compat.python_2_unicode_compatible
 class MLENgramModel(BaseNgramModel):
     """Class for providing MLE ngram model scores.
 
@@ -131,10 +134,10 @@ class MLENgramModel(BaseNgramModel):
     def freqdist(self, context):
         context = self.check_context(context)
         dist = self._ngrams[len(context)+1][context]
-        return dist.items()
+        return list(dist.items())
 
 
-@compat.python_2_unicode_compatible
+# @compat.python_2_unicode_compatible
 class LidstoneNgramModel(BaseNgramModel):
     """Provides Lidstone-smoothed scores.
 
@@ -156,7 +159,7 @@ class LidstoneNgramModel(BaseNgramModel):
         return (word_count + self.gamma) / (ctx_count + self.gamma_norm)
 
 
-@compat.python_2_unicode_compatible
+# @compat.python_2_unicode_compatible
 class LaplaceNgramModel(LidstoneNgramModel):
     """Implements Laplace (add one) smoothing.
 
@@ -170,10 +173,10 @@ class LaplaceNgramModel(LidstoneNgramModel):
 
 #####################################################
 if __name__ == '__main__':
-    from counter import build_vocabulary, count_ngrams
+    from .counter import build_vocabulary, count_ngrams
     sents = [['a', 'b', 'c'], ['a', 'c', 'c']]
     vocab = build_vocabulary(1, *sents)
     counter = count_ngrams(2, vocab, sents)
     model = MLENgramModel(counter)
-    print model.score('b', ('a',))
-    print model.order
+    print(model.score('b', ('a',)))
+    print(model.order)

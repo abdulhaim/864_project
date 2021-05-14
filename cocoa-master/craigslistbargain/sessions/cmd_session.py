@@ -1,4 +1,7 @@
-from session import Session
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import input
+from .session import Session
 
 
 class CmdSession(Session):
@@ -7,7 +10,7 @@ class CmdSession(Session):
         self.kb = kb
 
     def send(self):
-        message = raw_input()
+        message = input()
         event = self.parse_input(message)
         return event
 
@@ -31,4 +34,4 @@ class CmdSession(Session):
             return self.message(message)
 
     def receive(self, event):
-        print event.data
+        print(event.data)

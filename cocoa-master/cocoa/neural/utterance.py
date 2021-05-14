@@ -1,3 +1,8 @@
+from builtins import zip
+from builtins import str
+from builtins import map
+from builtins import range
+from builtins import object
 from cocoa.neural.symbols import markers
 from cocoa.core.entity import is_entity
 
@@ -101,7 +106,7 @@ class UtteranceBuilder(object):
         utterances = []
         for b in range(batch_size):
             #src_raw = batch.context_data['encoder_tokens'][b]
-            src_raw = map(self.vocab.to_word, batch.encoder_inputs.data[:, b])
+            src_raw = list(map(self.vocab.to_word, batch.encoder_inputs.data[:, b]))
             if not batch.context_data['decoder_tokens'][b]:
                 continue
             pred_sents = [self.build_target_tokens(preds[b][n])
@@ -109,7 +114,7 @@ class UtteranceBuilder(object):
             gold_sent = None
             if tgt is not None:
                 #gold_sent = self.build_target_tokens(tgt[:, b])
-                gold_sent = map(self.vocab.to_word, tgt[:, b])
+                gold_sent = list(map(self.vocab.to_word, tgt[:, b]))
 
             utterance = Utterance(src_raw, pred_sents,
                                   attn[b], pred_score[b], gold_sent,

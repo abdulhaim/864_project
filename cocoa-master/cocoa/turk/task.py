@@ -1,13 +1,18 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import input
+from builtins import range
+from builtins import object
 import sys
 import os
 from collections import defaultdict
-from itertools import izip
+
 
 from boto.mturk.question import QuestionContent, Question, QuestionForm, Overview, AnswerSpecification, SelectionAnswer, FormattedContent, FreeTextAnswer, HTMLQuestion
 from boto.mturk.connection import MTurkRequestError
 
 from cocoa.core.util import read_json, write_json
-from utils import default_qualifications, xml_safe
+from .utils import default_qualifications, xml_safe
 
 def add_turk_task_arguments(parser):
     parser.add_argument('--overall-template', help='Path to HTML templates')
@@ -65,7 +70,7 @@ class Task(object):
 
     def dump_db(self):
         write_json(self.db, self.db_path)
-        print 'HIT results dumped to {}'.format(self.db_path)
+        print('HIT results dumped to {}'.format(self.db_path))
 
     def create_hit(self, question):
         hit = self.mtc.create_hit(hit_type=self.hit_type_id, question=question, lifetime=self.lifetime, max_assignments=self.max_assignments)
@@ -80,38 +85,38 @@ class Task(object):
 
         """
         assert len(questions) == len(question_data)
-        decision = raw_input('About to create {} HITs that costs ${}. Continue? [Y/N]'.format(len(questions), self.reward * len(questions) * self.max_assignments))
+        decision = input('About to create {} HITs that costs ${}. Continue? [Y/N]'.format(len(questions), self.reward * len(questions) * self.max_assignments))
         if decision == 'Y':
-            for q, q_data in izip(questions, question_data):
+            for q, q_data in zip(questions, question_data):
                 hit_id = self.create_hit(q)
                 self.db[hit_id] = {'data': q_data}
             self.dump_db()
-            print "Your HIT has been created. You can see it at this link:"
-            print "https://workersandbox.mturk.com/mturk/preview?groupId={}".format(self.hit_type_id)
+            print("Your HIT has been created. You can see it at this link:")
+            print("https://workersandbox.mturk.com/mturk/preview?groupId={}".format(self.hit_type_id))
         else:
-            print 'Abort'
+            print('Abort')
 
     def check_workers(self):
         """Print workers' answers to check spammers.
         """
         worker_answers = defaultdict(lambda : defaultdict(int))
-        for hit_id, hit_info in self.db.iteritems():
-            for assignment_id, result in hit_info.iteritems():
+        for hit_id, hit_info in self.db.items():
+            for assignment_id, result in hit_info.items():
                 worker_id = result['worker_id']
                 answers = result['answers']
                 for answer in answers:
                     if answer['qid'] == 'comment':
                         continue
                     worker_answers[worker_id][int(answer['answer'])] += 1
-        for worker, answers in worker_answers.iteritems():
-            print worker, [answers[score] for score in xrange(-2, 3)]
+        for worker, answers in worker_answers.items():
+            print(worker, [answers[score] for score in range(-2, 3)])
 
     @classmethod
     def get_evaluated_qids(cls, db_path):
         db = read_json(db_path)
         qids = set()
-        for hit_id, hit_info in db.iteritems():
-            for assignment_id, result in hit_info.iteritems():
+        for hit_id, hit_info in db.items():
+            for assignment_id, result in hit_info.items():
                 answers = result['answers']
                 for answer in answers:
                     if answer['qid'] == 'comment':
@@ -134,10 +139,10 @@ class Task(object):
         """
         results = []
         num_reviewable_assignments = 0
-        for hit_id, hit_info in self.db.iteritems():
+        for hit_id, hit_info in self.db.items():
             try:
                 assignments = self.mtc.get_assignments(hit_id)
-                print hit_id, len(assignments)
+                print(hit_id, len(assignments))
             except MTurkRequestError:
                 continue
             if assignments:
@@ -150,7 +155,7 @@ class Task(object):
                             'answers': answers,
                             }
                     num_reviewable_assignments += 1
-        print '{} assignments ready'.format(num_reviewable_assignments)
+        print('{} assignments ready'.format(num_reviewable_assignments))
         self.dump_db()
 
 class EvalTask(Task):

@@ -56,7 +56,7 @@ def match_embeddings(vocab, emb):
     dim = len(values[1])
     filtered_embeddings = np.zeros((len(vocab), dim))
     count = {"match": 0, "miss": 0}
-    for w, w_id in vocab.word_to_ind.items():
+    for w, w_id in list(vocab.word_to_ind.items()):
         if w in emb:
             filtered_embeddings[w_id] = emb[w]
             count['match'] += 1

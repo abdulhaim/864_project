@@ -21,7 +21,7 @@ def write_json(raw, path, ensure_path=False):
         create_path(path)
     with open(path, 'w') as out:
         #print >>out, json.dumps(raw)
-        print(json.dumps(raw),file=out)
+        print(json.dumps(raw), file=out)
         #print >>depend, s,
         #print(s, end="", file=depend)
 

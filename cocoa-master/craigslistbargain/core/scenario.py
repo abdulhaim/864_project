@@ -24,7 +24,7 @@ class Scenario(BaseScenario):
         scenario_attributes = None
         if schema is not None:
             scenario_attributes = schema.attributes
-        if 'attributes' in raw.keys():
+        if 'attributes' in list(raw.keys()):
             scenario_attributes = [Attribute.from_json(a) for a in raw['attributes']]
 
         if scenario_attributes is None:

@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import object
 from cocoa.core.util import read_pickle, write_pickle
 from cocoa.model.counter import build_vocabulary, count_ngrams
 from cocoa.model.ngram import MLENgramModel
@@ -13,7 +15,7 @@ class Manager(object):
         vocab = build_vocabulary(1, *sequences)
         counter = count_ngrams(n, vocab, sequences, pad_left=True, pad_right=False)
         model = MLENgramModel(counter)
-        actions = vocab.keys()
+        actions = list(vocab.keys())
         #print model.score('init-price', ('<start>',))
         #print model.ngrams.most_common(10)
         return cls(model, actions)
@@ -46,10 +48,10 @@ class Manager(object):
         if len(freqdist) == 0:
             return None
         best_action = max(freqdist, key=lambda x: x[1])[0]
-        print 'context:', context
+        print('context:', context)
         #print 'dist:', freqdist
-        print 'available actions:', actions
-        print 'action:', best_action
+        print('available actions:', actions)
+        print('action:', best_action)
         return best_action
 
     def save(self, output):

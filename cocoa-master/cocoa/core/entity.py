@@ -1,3 +1,4 @@
+from builtins import str
 from collections import namedtuple
 
 class CanonicalEntity(namedtuple('CanonicalEntity', ['value', 'type'])):

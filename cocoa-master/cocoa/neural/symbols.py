@@ -11,6 +11,7 @@
 #
 #sequence_markers = [markers.EOS, markers.GO_S, markers.GO_B, markers.PAD]
 
+from builtins import object
 class Marker(object):
     EOS = '</s>'
     PAD = '<pad>'

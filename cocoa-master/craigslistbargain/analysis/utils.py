@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import str
+from past.utils import old_div
 import numpy as np
 
 from cocoa.core.dataset import Example
@@ -113,9 +116,9 @@ def get_margin(transcript, agent=None, role=None):
     midpoint = (agent_target + partner_target) / 2.
     norm_factor = np.abs(midpoint - agent_target)
     if agent_role == SELLER:
-        margin = (final_price - midpoint) / norm_factor
+        margin = old_div((final_price - midpoint), norm_factor)
     else:
-        margin = (midpoint - final_price) / norm_factor
+        margin = old_div((midpoint - final_price), norm_factor)
 
     # print 'Chat {:s}\tAgent: {:d}\tAgent role: {:s}\tAgent target: {:.2f}\t' \
     #       'Partner target: {:.2f}\tMidpoint: {:.2f}\tNorm factor: {:.2f}\t' \

@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+from __future__ import division
+from __future__ import print_function
+from builtins import range
+from past.utils import old_div
 import argparse
 import random
 import numpy as np
@@ -7,7 +11,7 @@ import copy
 import re
 import langdetect
 import os.path
-from itertools import izip
+
 from collections import defaultdict
 
 from cocoa.core.schema import Schema
@@ -61,7 +65,7 @@ def generate_kbs(schema, listing):
         l = listing[attr.name.lower()]
         if attr.name == 'Description':
             # NOTE: Buyer only sees the first half
-            N = max(1, len(l) / 2)
+            N = max(1, old_div(len(l), 2))
             buyer_item[attr.name] = l[:N]
         else:
             buyer_item[attr.name] = l
@@ -74,7 +78,7 @@ def generate_kbs(schema, listing):
     return kbs
 
 def discretize(price, price_unit):
-    price = int(price / price_unit)
+    price = int(old_div(price, price_unit))
     return price
 
 def generate_price_range(base_price, price_unit, discounts):
@@ -128,14 +132,14 @@ if __name__ == '__main__':
 
     listings = [read_json(os.path.join(args.scraped_data, 'craigslist_{}.json'.format(c))) for c in args.categories]
     fractions = np.array([float(x) for x in args.fractions])
-    fractions = fractions / np.sum(fractions)
+    fractions = old_div(fractions, np.sum(fractions))
 
     # Sample listings
     sampled_listings = []
     N = sum([len(l) for l in listings])
-    for listing, fraction in izip(listings, fractions):
+    for listing, fraction in zip(listings, fractions):
         n = int(N * fraction)
-        print listing[0]['category'], len(listing), fraction, n
+        print(listing[0]['category'], len(listing), fraction, n)
         sampled_listings.append(listing[:n])
     listings = [x for l in sampled_listings for x in l]
     N = len(listings)
@@ -149,22 +153,22 @@ if __name__ == '__main__':
     scenario_generator = generate_scenario(schema, base_price, price_unit, args.discounts, listings)
     for i, s in enumerate(scenario_generator):
         if i % 100 == 0:
-            print i
+            print(i)
         if i < args.skip:
             continue
         if len(scenario_list) == args.num_scenarios:
             break
         scenario_list.append(s)
     if len(scenario_list) < args.num_scenarios:
-        print 'Not enough listings: {} scenarios generated.'.format(len(scenario_list))
+        print('Not enough listings: {} scenarios generated.'.format(len(scenario_list)))
     scenario_db = ScenarioDB(scenario_list)
     write_json(scenario_db.to_dict(), args.scenarios_path)
 
     for i in range(min(10, len(scenario_db.scenarios_list))):
-        print '---------------------------------------------------------------------------------------------'
-        print '---------------------------------------------------------------------------------------------'
+        print('---------------------------------------------------------------------------------------------')
+        print('---------------------------------------------------------------------------------------------')
         scenario = scenario_db.scenarios_list[i]
-        print "Scenario id: %s" % scenario.uuid
+        print("Scenario id: %s" % scenario.uuid)
         for agent in (0, 1):
             kb = scenario.kbs[agent]
             kb.dump()
@@ -173,6 +177,6 @@ if __name__ == '__main__':
     for s in scenario_list:
         cat = s.kbs[0].facts['item']['Category']
         num_listings_per_category[cat] += 1
-    for k, v in num_listings_per_category.iteritems():
-        print k, v
-    print '%d scenarios generated' % len(scenario_list)
+    for k, v in num_listings_per_category.items():
+        print(k, v)
+    print('%d scenarios generated' % len(scenario_list))

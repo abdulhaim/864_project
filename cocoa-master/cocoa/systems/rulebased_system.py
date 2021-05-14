@@ -1,4 +1,5 @@
-from system import System
+from __future__ import absolute_import
+from .system import System
 from cocoa.sessions.timed_session import TimedSessionWrapper
 
 class RulebasedSystem(System):

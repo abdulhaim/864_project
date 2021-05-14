@@ -1,9 +1,11 @@
+from __future__ import division
+from past.utils import old_div
 import numpy as np
 
 EPS = 1e-12
 
 def safe_div(numerator, denominator):
-    return numerator / (denominator + EPS)
+    return old_div(numerator, (denominator + EPS))
 
 def entropy(p, normalized=True):
     p = np.array(p, dtype=np.float32)

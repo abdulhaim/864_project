@@ -1,3 +1,5 @@
+from builtins import str
+from builtins import object
 import time
 import string
 from cocoa.core.event import Event

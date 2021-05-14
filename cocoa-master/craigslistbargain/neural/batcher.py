@@ -1,3 +1,7 @@
+from __future__ import print_function
+from builtins import str
+from builtins import range
+from builtins import object
 import numpy as np
 from itertools import zip_longest
 
@@ -38,7 +42,7 @@ class Batch(object):
         self.lengths, sorted_ids = self.sort_by_length(self.encoder_inputs)
         self.tgt_lengths, _ = self.sort_by_length(self.decoder_inputs)
         if sort_by_length:
-            for k, v in self.context_data.items():
+            for k, v in list(self.context_data.items()):
                 if v is not None:
                     self.context_data[k] = self.order_by_id(v, sorted_ids)
             for attr in unsorted_attributes:
@@ -145,9 +149,9 @@ class DialogueBatcher(object):
                     turn_batch = pad_list_to_array(one_turn, pad, np.int32)
                     turn_batches.append([turn_batch])
             except IndexError:
-                print('num_turns:', self.num_turns)
+                print(('num_turns:', self.num_turns))
                 for dialogue in self.dialogues:
-                    print(len(dialogue.turns[0]), len(dialogue.roles))
+                    print((len(dialogue.turns[0]), len(dialogue.roles)))
                 import sys; sys.exit()
         return turn_batches
 
@@ -301,7 +305,7 @@ class DialogueBatcher(object):
 
     def get_encoding_turn_ids(self, num_turns):
         # NOTE: when creating dialogue turns (see add_utterance), we have set the first utterance to be from the encoding agent
-        encode_turn_ids = range(0, num_turns-1, 2)
+        encode_turn_ids = list(range(0, num_turns-1, 2))
         return encode_turn_ids
 
     def _get_lf_batch_at(self, dialogues, i):

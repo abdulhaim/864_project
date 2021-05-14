@@ -1,5 +1,7 @@
+from __future__ import absolute_import
+from builtins import str
 __author__ = 'anushabala'
-from session import Session
+from .session import Session
 import time
 import random
 from collections import deque

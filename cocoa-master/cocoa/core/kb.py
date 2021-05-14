@@ -1,3 +1,4 @@
+from builtins import object
 class KB(object):
     '''
     Represents an agent's knowledge.

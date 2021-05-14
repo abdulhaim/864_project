@@ -1,4 +1,6 @@
 from __future__ import division
+from builtins import range
+from builtins import object
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

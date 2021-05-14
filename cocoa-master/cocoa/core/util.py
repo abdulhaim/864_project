@@ -1,3 +1,7 @@
+from __future__ import division
+from __future__ import print_function
+from builtins import range
+from past.utils import old_div
 import random
 import ujson as json
 import string
@@ -22,7 +26,7 @@ def read_json(path):
 
 def write_json(raw, path):
     with open(path, 'w') as out:
-        print >>out, json.dumps(raw)
+        print(json.dumps(raw), file=out)
 
 def read_pickle(path):
     with open(path, 'rb') as fin:
@@ -36,5 +40,5 @@ def normalize(a):
     ma = np.max(a)
     mi = np.min(a)
     assert ma > mi
-    a = (a - mi) / (ma - mi)
+    a = old_div((a - mi), (ma - mi))
     return a

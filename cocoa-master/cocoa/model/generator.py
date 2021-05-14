@@ -1,3 +1,7 @@
+from __future__ import division
+from __future__ import print_function
+from builtins import object
+from past.utils import old_div
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -22,7 +26,7 @@ class Generator(object):
         locs.append(locs[-1] & cond)
 
     def _select_filter(self, locs):
-        print [np.sum(loc) for loc in locs]
+        print([np.sum(loc) for loc in locs])
         for loc in locs[::-1]:
             if np.sum(loc) > 0:
                 return loc
@@ -64,8 +68,8 @@ class Generator(object):
         return template
 
     def softmax(self, scores, T=1.):
-        exp_scores = np.exp(scores / T)
-        return exp_scores / np.sum(exp_scores)
+        exp_scores = np.exp(old_div(scores, T))
+        return old_div(exp_scores, np.sum(exp_scores))
 
 
 class Templates(object):

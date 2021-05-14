@@ -1,3 +1,4 @@
+from __future__ import print_function
 import onmt
 
 def get_data_generator(args, model_args, schema, test=False):

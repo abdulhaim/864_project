@@ -1,4 +1,6 @@
 from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import argparse
 import random
@@ -14,8 +16,8 @@ from torch.autograd import Variable
 from onmt.Trainer import Statistics as BaseStatistics
 
 from core.controller import Controller
-from utterance import UtteranceBuilder
-from trainer import Trainer
+from .utterance import UtteranceBuilder
+from .trainer import Trainer
 
 
 class Statistics(BaseStatistics):

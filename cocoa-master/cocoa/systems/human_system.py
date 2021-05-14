@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 __author__ = 'anushabala'
-from system import System
+from .system import System
 from cocoa.sessions.human_session import HumanSession
 
 

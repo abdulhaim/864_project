@@ -1,3 +1,4 @@
+from builtins import map
 import os
 import argparse
 from collections import namedtuple
@@ -47,7 +48,7 @@ class PytorchNeuralSystem(System):
         preprocessor = Preprocessor(schema, price_tracker, model_args.entity_encoding_form,
                 model_args.entity_decoding_form, model_args.entity_target_form)
         textint_map = TextIntMap(vocab, preprocessor)
-        remove_symbols = map(vocab.to_ind, (markers.EOS, markers.PAD))
+        remove_symbols = list(map(vocab.to_ind, (markers.EOS, markers.PAD)))
         use_cuda = use_gpu(args)
 
         kb_padding = mappings['kb_vocab'].to_ind(markers.PAD)

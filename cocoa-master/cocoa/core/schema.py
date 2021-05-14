@@ -2,6 +2,7 @@
 A schema specifies information about a domain (types, entities, relations).
 '''
 
+from builtins import object
 import json
 
 class Attribute(object):

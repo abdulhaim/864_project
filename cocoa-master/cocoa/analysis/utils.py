@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import print_function
+from past.utils import old_div
 from core.tokenizer import tokenize
 from collections import defaultdict
 import random
@@ -68,7 +71,7 @@ def intent_breakdown(parsed_dialogues):
             sequences[u.lf.intent] += 1
 
     total = sum(sequences.values())
-    for k, v in sequences.items():
+    for k, v in list(sequences.items()):
         ratio = 100 * (float(v) / total)
         print("{0} intent occured {1} times which is {2:.2f}%".format(k, v, ratio) )
 
@@ -77,10 +80,10 @@ def sample_intents(dialogues, desired_intent, size=10):
     for d in dialogues:
         for u in d:
             if (u.lf.intent == desired_intent) and random.random() < 0.3:
-                print u.text
+                print(u.text)
                 counter += 1
             if counter > size:
                 return counter
 
 def safe_div(numerator, denominator):
-    return numerator / (denominator + 1e-5)
+    return old_div(numerator, (denominator + 1e-5))

@@ -1,3 +1,4 @@
+from builtins import str
 import os
 import json
 
@@ -42,7 +43,7 @@ class HTMLVisualizer(BaseHTMLVisualizer):
 
             html.append("<tr><th colspan=\"2\">Personal Attributes</th></tr>")
 
-            for attr in kb_dict['personal'].keys():
+            for attr in list(kb_dict['personal'].keys()):
                 html.append("<tr><td>%s</td><td>%s</td></tr>" % (attr, kb_dict['personal'][attr]))
 
             html.append("</table></div>")

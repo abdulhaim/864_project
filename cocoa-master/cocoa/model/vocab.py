@@ -1,3 +1,6 @@
+from __future__ import print_function
+from builtins import str
+from builtins import object
 import numpy as np
 import time
 from collections import Counter
@@ -73,7 +76,7 @@ class Vocabulary(object):
                 break
 
     def load_embeddings(self, wordvec_file, dim):
-        print('Loading pretrained word vectors:', wordvec_file)
+        print(('Loading pretrained word vectors:', wordvec_file))
         start_time = time.time()
         embeddings = np.random.uniform(-1., 1., [self.size, dim])
         num_exist = 0

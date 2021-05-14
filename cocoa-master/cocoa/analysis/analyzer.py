@@ -1,5 +1,8 @@
 """Functions that analyze dialogues and models.
 """
+from __future__ import print_function
+from builtins import range
+from builtins import object
 import json
 from collections import defaultdict
 import numpy as np
@@ -42,7 +45,7 @@ class Analyzer(object):
     def intent_sequence_perplexity(self, intent_sequences, n=3):
         H = 0.
         N = 0
-        for intent, sequences in intent_sequences.iteritems():
+        for intent, sequences in intent_sequences.items():
             model = self.build_lm(sequences, n)
             H_, N_ = self.total_entropy(model, sequences)
             H += H_
@@ -72,8 +75,8 @@ class Analyzer(object):
         return np.power(2, H)
 
     def print_stats(self, stats, name):
-        print '='*5, name.upper(), '='*5
-        print json.dumps(stats, indent=2)
+        print('='*5, name.upper(), '='*5)
+        print(json.dumps(stats, indent=2))
 
     def parser_stats(self, parsed_dialogues, agent=None):
         stats = {}
@@ -120,7 +123,7 @@ class Analyzer(object):
 
         # Most likely sequence
         action_seq = [{'context': ('<start>', '<start>')}]
-        for i in xrange(10):
+        for i in range(10):
             state = action_seq[-1]
             context = state['context']
 

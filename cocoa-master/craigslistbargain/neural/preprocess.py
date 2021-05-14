@@ -1,7 +1,12 @@
 '''
 Preprocess examples in a dataset and generate data for models.
 '''
+from __future__ import print_function
 
+from builtins import map
+from builtins import zip
+from builtins import range
+from builtins import object
 import random
 import re
 import time
@@ -203,14 +208,14 @@ class Dialogue(object):
 
     def kb_context_to_int(self):
         self.category = self.mappings['cat_vocab'].to_ind(self.category)
-        self.title = map(self.mappings['kb_vocab'].to_ind, self.title)
-        self.description = map(self.mappings['kb_vocab'].to_ind, self.description)
+        self.title = list(map(self.mappings['kb_vocab'].to_ind, self.title))
+        self.description = list(map(self.mappings['kb_vocab'].to_ind, self.description))
 
     def lf_to_int(self):
         self.lf_token_turns = []
         for i, lf in enumerate(self.lfs):
             self.lf_token_turns.append(lf)
-            self.lfs[i] = map(self.mappings['lf_vocab'].to_ind, lf)
+            self.lfs[i] = list(map(self.mappings['lf_vocab'].to_ind, lf))
 
     def convert_to_int(self):
         if self.is_int:
@@ -407,7 +412,7 @@ class DataGenerator(object):
             ignore_cache=False, num_context=1, batch_size=1,
             model='seq2seq'):
         examples = {'train': train_examples, 'dev': dev_examples, 'test': test_examples}
-        self.num_examples = {k: len(v) if v else 0 for k, v in examples.items()}
+        self.num_examples = {k: len(v) if v else 0 for k, v in list(examples.items())}
         self.num_context = num_context
         self.model = model
 
@@ -415,13 +420,13 @@ class DataGenerator(object):
         self.ignore_cache = ignore_cache
         if (not os.path.exists(cache)) or ignore_cache:
             # NOTE: each dialogue is made into two examples from each agent's perspective
-            self.dialogues = {k: preprocessor.preprocess(v)  for k, v in examples.items() if v}
+            self.dialogues = {k: preprocessor.preprocess(v)  for k, v in list(examples.items()) if v}
 
-            for fold, dialogues in self.dialogues.items():
+            for fold, dialogues in list(self.dialogues.items()):
                 print('%s: %d dialogues out of %d examples' % (fold, len(dialogues), self.num_examples[fold]))
         else:
-            self.dialogues = {k: None  for k, v in examples.iteritems() if v}
-            print('Using cached data from', cache)
+            self.dialogues = {k: None  for k, v in examples.items() if v}
+            print(('Using cached data from', cache))
 
         self.mappings = self.load_mappings(model, mappings_path, schema, preprocessor)
         self.textint_map = TextIntMap(self.mappings['utterance_vocab'], preprocessor)
@@ -435,22 +440,22 @@ class DataGenerator(object):
                         kb_pad=self.mappings['kb_vocab'].to_ind(markers.PAD),
                         mappings=self.mappings, num_context=num_context)
 
-        self.batches = {k: self.create_batches(k, dialogues, batch_size) for k, dialogues in self.dialogues.items()}
+        self.batches = {k: self.create_batches(k, dialogues, batch_size) for k, dialogues in list(self.dialogues.items())}
 
     def load_mappings(self, model_type, mappings_path, schema, preprocessor):
         vocab_path = os.path.join(mappings_path, 'vocab.pkl')
         if not os.path.exists(vocab_path):
-            print('Vocab not found at', vocab_path)
+            print(('Vocab not found at', vocab_path))
             mappings = create_mappings(self.dialogues['train'], schema,
-                preprocessor.entity_forms.values())
+                list(preprocessor.entity_forms.values()))
             write_pickle(mappings, vocab_path)
             print('Wrote mappings to {}.'.format(vocab_path))
         else:
-            print('Loading vocab from', vocab_path)
+            print(('Loading vocab from', vocab_path))
             mappings = read_pickle(vocab_path)
 
-        for k, v in mappings.items():
-            print(k, v.size)
+        for k, v in list(mappings.items()):
+            print((k, v.size))
         mappings = make_model_mappings(model_type, mappings)
         return mappings
 
@@ -458,7 +463,7 @@ class DataGenerator(object):
         '''
         Convert tokens to integers.
         '''
-        for fold, dialogues in self.dialogues.items():
+        for fold, dialogues in list(self.dialogues.items()):
             for dialogue in dialogues:
                 dialogue.convert_to_int()
 

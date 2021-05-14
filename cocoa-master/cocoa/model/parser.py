@@ -1,3 +1,5 @@
+from builtins import str
+from builtins import object
 class Utterance(object):
     def __init__(self, raw_text=None, tokens=None, logical_form=None, template=None, ambiguous_template=False, agent=None):
         self.text = raw_text
@@ -27,7 +29,7 @@ class Utterance(object):
 class LogicalForm(object):
     def __init__(self, intent, **kwargs):
         self.intent = intent
-        for k, v in kwargs.iteritems():
+        for k, v in list(kwargs.items()):
             setattr(self, k, v)
 
     def to_dict(self):
@@ -37,7 +39,7 @@ class LogicalForm(object):
 
     def __str__(self):
         attrs = vars(self)
-        s = ' '.join(['{}={}'.format(k, v) for k, v in attrs.iteritems()])
+        s = ' '.join(['{}={}'.format(k, v) for k, v in list(attrs.items())])
         return s
 
 class Parser(object):
