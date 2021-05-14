@@ -1,5 +1,7 @@
 # CoCoA (Collaborative Communicating Agents)
 
+*This readme was written by Stanford*
+
 **CoCoA** is a dialogue framework written in Python, providing tools for
 data collection through a text-based chat interface and
 model development in PyTorch (largely based on OpenNMT).
