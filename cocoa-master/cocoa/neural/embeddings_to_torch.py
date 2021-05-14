@@ -52,7 +52,8 @@ def get_embeddings(file_):
 
 
 def match_embeddings(vocab, emb):
-    dim = len(six.next(six.itervalues(emb)))
+    values = list(emb.values())
+    dim = len(values[1])
     filtered_embeddings = np.zeros((len(vocab), dim))
     count = {"match": 0, "miss": 0}
     for w, w_id in vocab.word_to_ind.items():
