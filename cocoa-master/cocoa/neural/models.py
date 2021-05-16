@@ -23,7 +23,6 @@ def rnn_factory(rnn_type, **kwargs):
         rnn = getattr(nn, rnn_type)(**kwargs)
     return rnn, no_pack_padded_seq
 
-
 class EncoderBase(nn.Module):
     """
     Base encoder class. Specifies the interface used by different encoder types
@@ -191,6 +190,105 @@ class StdRNNEncoder(EncoderBase):
         else:
             outs = bottle_hidden(self.bridge[0], hidden)
         return outs
+    
+  
+#Inputs:
+#opt.rnn_type
+#bidirectional-False by default, can try true
+#opt.enc_layers,
+#opt.rnn_size,
+#opt.dropout, 
+#embeddings-generic embeddings initialized to zero I believe of the correct size
+class ProjectEncoder(nn.Module):
+    """Encodes a sequence of word embeddings"""
+    def __init__(self, input_size, hidden_size, num_layers=1, dropout=0.):
+        super(ProjectEncoder, self).__init__()
+        self.num_layers = num_layers
+        self.rnn = nn.GRU(input_size, hidden_size, num_layers, 
+                          batch_first=True, bidirectional=True, dropout=dropout)
+        
+    def forward(self, x, mask, lengths):
+        """
+        Applies a bidirectional GRU to sequence of embeddings x.
+        The input mini-batch x needs to be sorted by length.
+        x should have dimensions [batch, time, dim].
+        """
+        packed = pack(x, lengths, batch_first=True)
+        output, final = self.rnn(packed)
+        output, _ = pad_packed_sequence(output, batch_first=True)
+
+        # we need to manually concatenate the final states for both directions
+        fwd_final = final[0:final.size(0):2]
+        bwd_final = final[1:final.size(0):2]
+        final = torch.cat([fwd_final, bwd_final], dim=2)  # [num_layers, batch, 2*dim]
+
+        return output, final
+    
+    
+class Encoder(nn.Module):
+  def __init__(self, input_size, hidden_size, dropout=0.):
+    """
+    Inputs: 
+      - `input_size`: an int representing the RNN input size.
+      - `hidden_size`: an int representing the RNN hidden size.
+      - `dropout`: a float representing the dropout rate during training. Note
+          that for 1-layer RNN this has no effect since dropout only applies to
+          outputs of intermediate layers.
+    """
+    
+    super(Encoder, self).__init__()
+
+    # --------- Your code here --------- #
+    # feel free to use a pre-implemented pytorch GRU
+    # https://pytorch.org/docs/stable/generated/torch.nn.GRU.html
+    self.rnn = nn.GRU(input_size,hidden_size, num_layers=1, batch_first=True,bidirectional=True,dropout=dropout) # Use a pre-implemented pytorch GRU
+    #batch_first = True as inputs provided with batch first
+    # Setting to true makes inputs and outputs have the batch size first
+    
+    # --------- Your code ends --------- #
+
+  def forward(self, inputs, lengths):
+    """
+    Inputs:
+      - `inputs`: a 3d-tensor of shape (batch_size, max_seq_length, embed_size)
+          representing a batch of padded embedded word vectors of source
+          sentences.
+      - `lengths`: a 1d-tensor of shape (batch_size,) representing the sequence
+          lengths of `inputs`.
+
+    Returns:
+      - `outputs`: a 3d-tensor of shape
+        (batch_size, max_seq_length, hidden_size).
+      - `finals`: a 3d-tensor of shape (num_layers, batch_size, hidden_size).
+
+      Hint: `outputs` and `finals` are both standard GRU outputs.
+    """
+    packed_seq = pack_padded_sequence(inputs,list(lengths),batch_first=True, enforce_sorted=False)
+    #enforce_sorted = False as sequences are not sorted in decreasing order
+    #pack_padded_sequence only works on cuda if lengths is a list
+    #batch_first = True as input is B * max length * form
+    outputs, finals = self.rnn(packed_seq) #initial hidden state is 0s
+
+    outputs, _ = pad_packed_sequence(outputs, batch_first=True,total_length=MAX_SENT_LENGTH_PLUS_SOS_EOS) #returns unpacked versions
+    # we could keep the packed version of the output, as output is not used
+    #Want the first element in the tuple, which is the padded sequences
+    # we need to manually concatenate the final states for both directions
+    fwd_final = finals[0:finals.size(0):2] # Take every other element, starting at 0
+    bwd_final = finals[1:finals.size(0):2] # Starting at 1
+    finals = torch.cat([fwd_final, bwd_final], dim=2)  # [num_layers, batch, 2*hidden_dim]
+    #batch_first as want the batch size first
+    
+    # --------- Your code here --------- #
+    # hint: you probably want to pack the inputs and outputs (see note below)
+    #       https://pytorch.org/docs/stable/generated/torch.nn.utils.rnn.pack_padded_sequence.html
+    # hint2: given the shape of the inputs and outputs, 
+    #        it might be helpful to specify batch_first=True (also in __init___)
+    # hint3: MAX_SENT_LENGTH_PLUS_SOS_EOS is a global variable that exists if 
+    #        you ever need to specify a total_length for outputs
+
+    # --------- Your code ends --------- #
+
+    return outputs, finals
 
 
 class RNNDecoderBase(nn.Module):
