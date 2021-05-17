@@ -182,7 +182,6 @@ class TransformerDecoderLayer(nn.Module):
                                      mask=dec_mask)
         query_norm = self.layer_norm_2(query+input)
         print(type(memory_bank))
-        memory_bank = torch.FloatTensor(memory_bank)
         mid, attn = self.context_attn(memory_bank, memory_bank, query_norm,
                                       mask=src_pad_mask)
         output = self.feed_forward(mid+query+input)

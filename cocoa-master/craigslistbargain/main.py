@@ -127,9 +127,6 @@ if __name__ == '__main__':
     schema = Schema(model_args.schema_path, None)
     data_generator = get_data_generator(args, model_args, schema)
     mappings = data_generator.mappings
-    #print(mappings["src_vocab"].word_to_ind)
-    #print(mappings)
-    #print(1/0)
     if args.vocab_only:
         import sys; sys.exit()
 
