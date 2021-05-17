@@ -8,7 +8,7 @@ import torch.nn as nn
 import onmt
 import onmt.io
 import onmt.Models
-import onmt.modules
+from onmt.modules.Transformer import TransformerEncoder, TransformerDecoder
 from onmt.modules import Embeddings, ImageEncoder, CopyGenerator
 from onmt.Utils import use_gpu
 
@@ -98,7 +98,8 @@ def make_decoder(opt, embeddings, tgt_dict):
     """
     bidirectional = True if opt.encoder_type == 'brnn' else False
     pad = tgt_dict.to_ind(markers.PAD)
-    if "multibank" in opt.global_attention:
+    # Comment out as want to use TransformerDecoder
+    if "multibank" in opt.global_attention and opt.decoder_type != "transformer":
         return MultiAttnDecoder(opt.rnn_type, bidirectional,
                              opt.dec_layers, opt.rnn_size,
                              attn_type=opt.global_attention,

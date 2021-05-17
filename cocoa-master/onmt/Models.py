@@ -48,9 +48,16 @@ class EncoderBase(nn.Module):
           E-->G
     """
     def _check_args(self, input, lengths=None, hidden=None):
-        s_len, n_batch, n_feats = input.size()
+        #Transformer
+        #print(input)
+        #print(lengths)
+        #print(hidden)
+        s_len, n_batch = input.size()
+        #print(n_batch)
         if lengths is not None:
             n_batch_, = lengths.size()
+            #print(n_batch_)
+            #print(1/0)
             aeq(n_batch, n_batch_)
 
     def forward(self, src, lengths=None, encoder_state=None):

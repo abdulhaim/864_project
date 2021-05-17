@@ -3,7 +3,6 @@ import numpy as np
 from nltk import ngrams
 from nltk.corpus import stopwords
 from collections import defaultdict
-from itertools import ifilter
 
 from cocoa.core.entity import is_entity
 from cocoa.model.parser import Parser as BaseParser, LogicalForm as LF, Utterance
@@ -110,7 +109,7 @@ class Parser(BaseParser):
         partner_prev_price = dialogue_state.partner_price
         partner_role = 'seller' if self.kb.role == 'buyer' else 'buyer'
         inc = 1. if partner_role == 'seller' else -1.
-        for price in ifilter(lambda x: self.is_price_token(x), tokens):
+        for price in filter(lambda x: self.is_price_token(x), tokens):
             price, type_ = price.canonical.value, price.canonical.type
             # 1) New price doest repeat current price
             # 2) One's latest price is worse than previous ones (compromise)
@@ -257,14 +256,14 @@ if __name__ == '__main__':
         if Preprocessor.skip_example(example):
             continue
         parse_dialogue(example, price_tracker, counter)
-    print '% unk:', counter['unk_lf'] / float(counter['total_lf'])
-    print 'intent seqs:'
+    print('% unk:', counter['unk_lf'] / float(counter['total_lf']))
+    print('intent seqs:')
     seqs = counter['seqs']
     for first in seqs:
         total_first = sum([sum(seqs[first][a].values()) for a in seqs[first]])
         unks = sum([sum(seqs[first][a].values()) for a in ('unknown',)])
         unks = float(unks) / total_first
-        print first, 'unk={:.3f}'.format(unks)
+        print(first, 'unk={:.3f}'.format(unks))
         for second in seqs[first]:
             if second == 'unknown':
                 continue
@@ -273,5 +272,5 @@ if __name__ == '__main__':
                 continue
             unks = seqs[first][second]['unknown']
             unks = float(unks) / total
-            print first, second, '{:.3f}'.format(total/float(total_first)), 'unk={:.3f}'.format(unks)
-        print '------------------------'
+            print(first, second, '{:.3f}'.format(total/float(total_first)), 'unk={:.3f}'.format(unks))
+        print('------------------------')

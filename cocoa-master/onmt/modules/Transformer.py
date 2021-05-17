@@ -53,7 +53,7 @@ class TransformerEncoderLayer(nn.Module):
     """
 
     def __init__(self, size, dropout,
-                 head_count=8, hidden_size=2048):
+                 head_count=5, hidden_size=2048):
         super(TransformerEncoderLayer, self).__init__()
 
         self.self_attn = onmt.modules.MultiHeadedAttention(
@@ -114,7 +114,8 @@ class TransformerEncoder(EncoderBase):
         s_len, n_batch, emb_dim = emb.size()
 
         out = emb.transpose(0, 1).contiguous()
-        words = input[:, :, 0].transpose(0, 1)
+        #print(input.shape)
+        words = input[:, :].transpose(0, 1)
         # CHECKS
         out_batch, out_len, _ = out.size()
         w_batch, w_len = words.size()
@@ -146,7 +147,7 @@ class TransformerDecoderLayer(nn.Module):
       hidden_size(int): the second-layer of the PositionwiseFeedForward.
     """
     def __init__(self, size, dropout,
-                 head_count=8, hidden_size=2048):
+                 head_count=5, hidden_size=2048):
         super(TransformerDecoderLayer, self).__init__()
         self.self_attn = onmt.modules.MultiHeadedAttention(
                 head_count, size, dropout=dropout)
@@ -166,14 +167,11 @@ class TransformerDecoderLayer(nn.Module):
     def forward(self, input, memory_bank, src_pad_mask, tgt_pad_mask):
         # Args Checks
         input_batch, input_len, _ = input.size()
-        contxt_batch, contxt_len, _ = memory_bank.size()
-        aeq(input_batch, contxt_batch)
 
         src_batch, t_len, s_len = src_pad_mask.size()
         tgt_batch, t_len_, t_len__ = tgt_pad_mask.size()
-        aeq(input_batch, contxt_batch, src_batch, tgt_batch)
+        aeq(input_batch, src_batch, tgt_batch)
         aeq(t_len, t_len_, t_len__, input_len)
-        aeq(s_len, contxt_len)
         # END Args Checks
 
         dec_mask = torch.gt(tgt_pad_mask + self.mask[:, :tgt_pad_mask.size(1),
@@ -183,6 +181,8 @@ class TransformerDecoderLayer(nn.Module):
         query, attn = self.self_attn(input_norm, input_norm, input_norm,
                                      mask=dec_mask)
         query_norm = self.layer_norm_2(query+input)
+        print(type(memory_bank))
+        memory_bank = torch.FloatTensor(memory_bank)
         mid, attn = self.context_attn(memory_bank, memory_bank, query_norm,
                                       mask=src_pad_mask)
         output = self.feed_forward(mid+query+input)
@@ -190,11 +190,9 @@ class TransformerDecoderLayer(nn.Module):
         # CHECKS
         output_batch, output_len, _ = output.size()
         aeq(input_len, output_len)
-        aeq(contxt_batch, output_batch)
 
         n_batch_, t_len_, s_len_ = attn.size()
         aeq(input_batch, n_batch_)
-        aeq(contxt_len, s_len_)
         aeq(input_len, t_len_)
         # END CHECKS
 
@@ -265,20 +263,17 @@ class TransformerDecoder(nn.Module):
         """
         # CHECKS
         assert isinstance(state, TransformerDecoderState)
-        tgt_len, tgt_batch, _ = tgt.size()
-        memory_len, memory_batch, _ = memory_bank.size()
-        aeq(tgt_batch, memory_batch)
+        tgt_len, tgt_batch = tgt.size()
 
         if state.previous_input is not None:
             tgt = torch.cat([state.previous_input, tgt], 0)
 
         src = state.src
-        src_words = src[:, :, 0].transpose(0, 1)
-        tgt_words = tgt[:, :, 0].transpose(0, 1)
+        src_words = src[:, :].transpose(0, 1)
+        tgt_words = tgt[:, :].transpose(0, 1)
         src_batch, src_len = src_words.size()
         tgt_batch, tgt_len = tgt_words.size()
-        aeq(tgt_batch, memory_batch, src_batch, tgt_batch)
-        aeq(memory_len, src_len)
+        aeq(tgt_batch, src_batch, tgt_batch)
         # aeq(tgt_len, tgt_len)
         # END CHECKS
 
@@ -293,7 +288,13 @@ class TransformerDecoder(nn.Module):
         assert emb.dim() == 3  # len x batch x embedding_dim
 
         output = emb.transpose(0, 1).contiguous()
-        src_memory_bank = memory_bank.transpose(0, 1).contiguous()
+        # Calculate the attention.
+        if isinstance(memory_bank, list):
+            src_memory_bank = [bank.transpose(0,1) for bank in memory_bank]
+            # encoder_memory_bank and prev_context_memory_bank are both
+            # (seq_len, batch_size, hidden) --> (batch_size, seq_len, hidden)
+        else:
+            src_memory_bank = memory_bank.transpose(0,1)
 
         padding_idx = self.embeddings.word_padding_idx
         src_pad_mask = src_words.data.eq(padding_idx).unsqueeze(1) \

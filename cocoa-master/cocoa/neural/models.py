@@ -48,9 +48,16 @@ class EncoderBase(nn.Module):
           E-->G
     """
     def _check_args(self, input, lengths=None, hidden=None):
+        #STDRNN
+        #print(input)
+        #print(lengths)
+        #print(hidden)
         s_len, n_batch = input.size()
+        #print(n_batch)
         if lengths is not None:
             n_batch_, = lengths.size()
+            #print(n_batch_)
+            #print(1/0)
             aeq(n_batch, n_batch_)
 
     def forward(self, src, lengths=None, encoder_state=None):
@@ -516,6 +523,9 @@ class StdRNNDecoder(RNNDecoderBase):
         #    packed_emb = pack(sorted_emb, lengths.view(-1).tolist())
 
         # Run the forward pass of the RNN.
+        #print(state.hidden[0].shape)
+        #print(packed_emb.shape)
+        #print(1/0)
         if isinstance(self.rnn, nn.GRU):
             rnn_output, decoder_final = self.rnn(packed_emb, state.hidden[0])
         else:

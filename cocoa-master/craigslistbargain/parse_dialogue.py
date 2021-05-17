@@ -91,5 +91,5 @@ if __name__ == '__main__':
     # Test model and generator
     generator = Generator(templates)
     action = manager.choose_action(None, context=('<start>', '<start>'))
-    print action
-    print generator.retrieve('<start>', context_tag='<start>', tag=action, category='car', role='seller').template
+    print(action)
+    print(generator.retrieve('<start>', context_tag='<start>', tag=action, category='car', role='seller').template)

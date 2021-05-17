@@ -1,4 +1,4 @@
-from parser import LogicalForm as LF, Utterance
+from .parser import LogicalForm as LF, Utterance
 
 class DialogueState(object):
     def __init__(self, agent, kb):
