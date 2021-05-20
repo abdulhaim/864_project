@@ -91,9 +91,15 @@ class MultiHeadedAttention(nn.Module):
         """
 
         # CHECKS
+        #print(1/0)
         #print(len(key))
         #print(type(key[0]))
         #print(type(key))
+        #print(key.shape)
+        #print(value.shape)
+        #print(query.shape)
+        #print(mask.shape)
+        #print("-"*40)
         batch, k_len, d = key.size()
         batch_, k_len_, d_ = value.size()
         aeq(batch, batch_)

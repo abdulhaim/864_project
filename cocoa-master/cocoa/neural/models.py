@@ -552,13 +552,15 @@ class StdRNNDecoder(RNNDecoderBase):
         # END
 
         # Calculate the attention.
+        #print(memory_banks[0].shape)
         if isinstance(memory_banks, list):
             memory_banks = [bank.transpose(0,1) for bank in memory_banks]
             # encoder_memory_bank and prev_context_memory_bank are both
             # (seq_len, batch_size, hidden) --> (batch_size, seq_len, hidden)
         else:
             memory_banks = memory_banks.transpose(0,1)
-
+        #print(memory_banks[0].shape)
+            
         decoder_outputs, p_attn = self.attn(
             rnn_output.transpose(0, 1).contiguous(), memory_banks,
             memory_lengths=memory_lengths

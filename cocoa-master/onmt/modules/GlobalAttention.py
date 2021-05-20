@@ -122,7 +122,7 @@ class GlobalAttention(nn.Module):
           * Attention distribtutions for each query
              `[tgt_len x batch x src_len]`
         """
-
+        
         # one step input
         if input.dim() == 2:
             one_step = True

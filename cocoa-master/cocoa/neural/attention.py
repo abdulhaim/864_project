@@ -203,6 +203,7 @@ class MultibankGlobalAttention(nn.Module):
         # memory_banks have shape (batch_size, seq_len, hidden_dim)
         attention_hidden_states = []
         alignment_vectors = []
+        #print(1/0)
 
         for idx, memory_bank in enumerate(memory_banks):
             memory_lengths = None if idx > 0 else memory_lengths

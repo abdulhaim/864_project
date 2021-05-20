@@ -165,13 +165,21 @@ class TransformerDecoderLayer(nn.Module):
         self.register_buffer('mask', mask)
 
     def forward(self, input, memory_bank, src_pad_mask, tgt_pad_mask):
+        
+        #print(memory_bank.size())
+        #print(src_pad_mask.size())
+        #print("="*40)
+        
         # Args Checks
         input_batch, input_len, _ = input.size()
+        contxt_batch, contxt_len, _ = memory_bank.size()
+        aeq(input_batch, contxt_batch)
 
         src_batch, t_len, s_len = src_pad_mask.size()
         tgt_batch, t_len_, t_len__ = tgt_pad_mask.size()
-        aeq(input_batch, src_batch, tgt_batch)
+        aeq(input_batch, contxt_batch, src_batch, tgt_batch)
         aeq(t_len, t_len_, t_len__, input_len)
+        aeq(s_len, contxt_len)
         # END Args Checks
 
         dec_mask = torch.gt(tgt_pad_mask + self.mask[:, :tgt_pad_mask.size(1),
@@ -181,7 +189,13 @@ class TransformerDecoderLayer(nn.Module):
         query, attn = self.self_attn(input_norm, input_norm, input_norm,
                                      mask=dec_mask)
         query_norm = self.layer_norm_2(query+input)
-        print(type(memory_bank))
+        
+        #print(memory_bank.shape)
+        #print(query_norm.shape)
+        #print(src_pad_mask.shape)
+        #print("-"*40)
+        
+        #2nd
         mid, attn = self.context_attn(memory_bank, memory_bank, query_norm,
                                       mask=src_pad_mask)
         output = self.feed_forward(mid+query+input)
@@ -256,23 +270,31 @@ class TransformerDecoder(nn.Module):
             self._copy = True
         self.layer_norm = onmt.modules.BottleLayerNorm(hidden_size)
 
-    def forward(self, tgt, memory_bank, state, memory_lengths=None):
+    def forward(self, tgt, memory_banks, state, memory_lengths=None, lengths=None):
         """
         See :obj:`onmt.modules.RNNDecoderBase.forward()`
         """
+        
+        memory_bank = memory_banks[0] #Context memory of shape 1,128,300 in the second spot in the list
+        #print(memory_bank.shape)
+        
         # CHECKS
         assert isinstance(state, TransformerDecoderState)
         tgt_len, tgt_batch = tgt.size()
+        memory_len, memory_batch, _ = memory_bank.size()
+        aeq(tgt_batch, memory_batch)
 
         if state.previous_input is not None:
             tgt = torch.cat([state.previous_input, tgt], 0)
 
         src = state.src
+        #print(src.shape)
         src_words = src[:, :].transpose(0, 1)
         tgt_words = tgt[:, :].transpose(0, 1)
         src_batch, src_len = src_words.size()
         tgt_batch, tgt_len = tgt_words.size()
-        aeq(tgt_batch, src_batch, tgt_batch)
+        aeq(tgt_batch, memory_batch, src_batch, tgt_batch)
+        aeq(memory_len, src_len)
         # aeq(tgt_len, tgt_len)
         # END CHECKS
 
@@ -288,12 +310,16 @@ class TransformerDecoder(nn.Module):
 
         output = emb.transpose(0, 1).contiguous()
         # Calculate the attention.
-        if isinstance(memory_bank, list):
-            src_memory_bank = [bank.transpose(0,1) for bank in memory_bank]
-            # encoder_memory_bank and prev_context_memory_bank are both
-            # (seq_len, batch_size, hidden) --> (batch_size, seq_len, hidden)
-        else:
-            src_memory_bank = memory_bank.transpose(0,1)
+        #print(memory_bank[0].shape)
+#        if isinstance(memory_bank, list):
+#            src_memory_bank = [bank.transpose(0,1) for bank in memory_bank]
+#            # encoder_memory_bank and prev_context_memory_bank are both
+#            # (seq_len, batch_size, hidden) --> (batch_size, seq_len, hidden)
+#        else:
+#            src_memory_bank = memory_bank.transpose(0,1)
+#        print(src_memory_bank.shape)
+#        print("--------")
+        src_memory_bank = memory_bank.transpose(0, 1).contiguous()
 
         padding_idx = self.embeddings.word_padding_idx
         src_pad_mask = src_words.data.eq(padding_idx).unsqueeze(1) \
@@ -301,11 +327,13 @@ class TransformerDecoder(nn.Module):
         tgt_pad_mask = tgt_words.data.eq(padding_idx).unsqueeze(1) \
             .expand(tgt_batch, tgt_len, tgt_len)
 
+        #1st
         for i in range(self.num_layers):
             output, attn \
                 = self.transformer_layers[i](output, src_memory_bank,
                                              src_pad_mask, tgt_pad_mask)
 
+        print(1/0)
         output = self.layer_norm(output)
         # Process the result and update the attentions.
         outputs = output.transpose(0, 1).contiguous()

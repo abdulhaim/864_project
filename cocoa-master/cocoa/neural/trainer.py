@@ -176,7 +176,7 @@ class Trainer(object):
                 continue
             elif not self.model.stateful:
                 dec_state = None
-            enc_state = dec_state.hidden if dec_state is not None else None
+            enc_state = dec_state.previous_input if dec_state is not None else None
 
             outputs, attns, dec_state = self._run_batch(batch, None, enc_state)
             _, batch_stats = self.valid_loss.compute_loss(batch.targets, outputs)
@@ -261,6 +261,7 @@ class Trainer(object):
 
             self.model.zero_grad()
             outputs, attns, dec_state = self._run_batch(batch, None, enc_state)
+            #print(type(dec_state))
 
             loss, batch_stats = self.train_loss.compute_loss(batch.targets, outputs)
             loss.backward()
