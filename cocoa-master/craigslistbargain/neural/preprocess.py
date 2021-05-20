@@ -439,6 +439,7 @@ class DataGenerator(object):
 
     def load_mappings(self, model_type, mappings_path, schema, preprocessor):
         vocab_path = os.path.join(mappings_path, 'vocab.pkl')
+        #Comment out when running Transformer
 #        if not os.path.exists(vocab_path):
 #            print('Vocab not found at', vocab_path)
 #            mappings = create_mappings(self.dialogues['train'], schema,
