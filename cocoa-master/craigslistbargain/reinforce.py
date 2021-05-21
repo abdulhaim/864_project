@@ -9,7 +9,8 @@ import json
 import numpy as np
 
 from onmt.Utils import use_gpu
-
+import sys 
+sys.path.insert(0, '../')
 from cocoa.core.util import read_json
 from cocoa.core.schema import Schema
 from cocoa.core.scenario_db import ScenarioDB
@@ -22,6 +23,7 @@ from systems import get_system
 from neural.rl_trainer import RLTrainer
 from neural import build_optim
 import options
+import torch 
 
 def make_loss(opt, model, tgt_vocab):
     loss = ReinforceLossCompute(model.generator, tgt_vocab)
@@ -46,6 +48,7 @@ if __name__ == '__main__':
     if args.random_seed:
         random.seed(args.random_seed)
         np.random.seed(args.random_seed)
+        torch.manual_seed(args.random_seed)
 
     schema = Schema(args.schema_path)
     scenario_db = ScenarioDB.from_dict(schema, read_json(args.scenarios_path), Scenario)

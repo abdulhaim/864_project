@@ -1,0 +1,32 @@
+2021-05-18 12:57:49,837 : Reward 1.087 at step 0
+2021-05-18 12:57:49,837 : Scaled Reward 0.000 at step 0
+2021-05-18 12:57:49,837 : Mean Reward 1.087 at iteration 0
+2021-05-18 12:57:49,883 : Loss 0.000 at step <generator object NeuralSession.iter_batches at 0x148175350>
+2021-05-18 12:57:51,285 : Reward -1.000 at step 1
+2021-05-18 12:57:51,285 : Scaled Reward -1.000 at step 1
+2021-05-18 12:57:51,285 : Mean Reward 0.043 at iteration 1
+2021-05-18 12:57:51,366 : Loss -65.233 at step <generator object NeuralSession.iter_batches at 0x1483dfa50>
+2021-05-18 12:57:52,449 : Reward 0.000 at step 2
+2021-05-18 12:57:52,449 : Scaled Reward -0.034 at step 2
+2021-05-18 12:57:52,449 : Mean Reward 0.029 at iteration 2
+2021-05-18 12:57:52,502 : Loss -2.819 at step <generator object NeuralSession.iter_batches at 0x148175350>
+2021-05-18 12:57:53,834 : Reward 1.000 at step 3
+2021-05-18 12:57:53,834 : Scaled Reward 0.857 at step 3
+2021-05-18 12:57:53,835 : Mean Reward 0.272 at iteration 3
+2021-05-18 12:57:53,908 : Loss 108.781 at step <generator object NeuralSession.iter_batches at 0x1483df820>
+2021-05-18 12:57:55,289 : Reward -0.604 at step 4
+2021-05-18 12:57:55,290 : Scaled Reward -0.837 at step 4
+2021-05-18 12:57:55,290 : Mean Reward 0.097 at iteration 4
+2021-05-18 12:57:55,373 : Loss -103.148 at step <generator object NeuralSession.iter_batches at 0x148175350>
+2021-05-18 12:57:56,553 : Reward -1.000 at step 5
+2021-05-18 12:57:56,553 : Scaled Reward -1.055 at step 5
+2021-05-18 12:57:56,553 : Mean Reward -0.086 at iteration 5
+2021-05-18 12:57:56,615 : Loss -121.780 at step <generator object NeuralSession.iter_batches at 0x1483df6d0>
+2021-05-18 12:57:58,037 : Reward -0.111 at step 6
+2021-05-18 12:57:58,038 : Scaled Reward -0.027 at step 6
+2021-05-18 12:57:58,038 : Mean Reward -0.090 at iteration 6
+2021-05-18 12:57:58,121 : Loss -4.779 at step <generator object NeuralSession.iter_batches at 0x148175350>
+2021-05-18 12:57:59,285 : Reward -1.881 at step 7
+2021-05-18 12:57:59,286 : Scaled Reward -1.640 at step 7
+2021-05-18 12:57:59,286 : Mean Reward -0.314 at iteration 7
+2021-05-18 12:57:59,348 : Loss -247.544 at step <generator object NeuralSession.iter_batches at 0x1483df900>

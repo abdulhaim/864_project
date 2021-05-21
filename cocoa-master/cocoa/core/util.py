@@ -3,7 +3,7 @@ from __future__ import print_function
 from builtins import range
 from past.utils import old_div
 import random
-import ujson as json
+import json as json
 import string
 import pickle
 import numpy as np
@@ -19,7 +19,7 @@ def random_multinomial(probs):
         i += 1
 
 def generate_uuid(prefix):
-    return prefix + '_' + ''.join([random.choice(string.digits + string.letters) for _ in range(16)])
+    return prefix + '_' + ''.join([random.choice(string.digits + string.ascii_letters) for _ in range(16)])
 
 def read_json(path):
     return json.load(open(path))

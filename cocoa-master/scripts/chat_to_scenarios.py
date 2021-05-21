@@ -1,8 +1,11 @@
 import argparse
+import sys 
+sys.path.insert(0, '../')
+
 from cocoa.core.util import read_json, write_json
 from cocoa.core.scenario_db import ScenarioDB
 from cocoa.core.schema import Schema
-from core.scenario import Scenario
+from craigslistbargain.core.scenario import Scenario
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--chats')
