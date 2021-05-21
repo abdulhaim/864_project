@@ -30,7 +30,8 @@ def read_pickle(path):
 
 def write_pickle(obj, path):
     with open(path, 'wb') as fout:
-        pickle.dump(list(obj), fout)
+        
+        pickle.dump(obj, fout)
 
 def normalize(a):
     ma = np.max(a)

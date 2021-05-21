@@ -526,6 +526,7 @@ class StdRNNDecoder(RNNDecoderBase):
         #print(state.hidden[0].shape)
         #print(packed_emb.shape)
         #print(1/0)
+        #Teaching forcing during training
         if isinstance(self.rnn, nn.GRU):
             rnn_output, decoder_final = self.rnn(packed_emb, state.hidden[0])
         else:

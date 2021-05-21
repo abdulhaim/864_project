@@ -28,6 +28,7 @@ opt = parser.parse_args()
 
 def get_vocabs(vocab_path, vocab_type):
     mappings = read_pickle(vocab_path)
+    print(type(mappings))
     mapping_key = "{}_vocab".format(vocab_type)
     vocab = mappings[mapping_key]
     print('{0} vocab size: {1}'.format(vocab_type, len(vocab)) )
